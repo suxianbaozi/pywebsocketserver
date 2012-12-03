@@ -81,7 +81,6 @@ class SocketIoThread(Thread):
                     self.con.close()
                     break
     def onData(self,text) :
-        print type(text)
         try:
            datas =  json.loads(text)
         except:
