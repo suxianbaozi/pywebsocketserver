@@ -15,6 +15,7 @@ class SocketIoThread(Thread):
         self.isHandleShake = False
         self.uid = uid
         self.io = io
+        self.signKey = "ADS#@!D"
     def run(self):
         while True:
             if not self.isHandleShake: #握手
@@ -85,9 +86,18 @@ class SocketIoThread(Thread):
            datas =  json.loads(text)
         except:
            print "数据格式不正确"
+           self.con.close()
            return False
         uid = datas['uid']
         value = datas['data'].encode("utf8")
+        sign = datas['sign'].encode("utf8");
+
+        hashStr = hashlib.new("md5",str(uid)+self.signKey).hexdigest()
+
+        if hashStr!=sign:
+            print "非法请求"
+            self.con.close()
+            return
         return self.io.onData(uid,value)
         
         
@@ -95,6 +105,7 @@ class SocketIoThread(Thread):
         jsonText = {}
         jsonText['uid'] = self.uid
         jsonText['text'] = text
+        jsonText['sign'] = hashlib.new("md5",str(self.uid)+self.signKey).hexdigest()
         text = json.dumps(jsonText)
         #头
         self.con.send(struct.pack("!B",0x81))
