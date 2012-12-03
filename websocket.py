@@ -31,7 +31,7 @@ class returnCrossDomain(Thread):
                 response += '''Upgrade: websocket\r\n'''
                 response += '''Connection: Upgrade\r\n'''
                 response += '''Sec-WebSocket-Accept: %s\r\n'''%(resKey,)
-                response += '''Sec-WebSocket-Protocol: chat,superchat\r\n\r\n\r\n'''
+                response += '''Sec-WebSocket-Protocol: chat,superchat\r\n'''
                 self.con.send(response)
                 self.isHandleShake = True
                 print "握手成功"
@@ -85,28 +85,23 @@ class returnCrossDomain(Thread):
         print text
         
     def sendData(self,text) :
-        #self.con.send("\xff%s\x00"%(text,))
-        #return
+        print "给客户端发送信息%s"%(text,)
         #头
-        
         self.con.send(struct.pack("!B",0x81))
         #计算长度
         length = len(text)
-        
-        masking = 0b00000000;
-        
+       # masking = 0b00000000;
         
         if length<=125:
-            self.con.send(struct.pack("!B",length | masking))
+            self.con.send(struct.pack("!B",length))
             
         elif length<=65536:
-            self.con.send(struct.pack("!B",126 | masking))
+            self.con.send(struct.pack("!B",126))
             self.con.send(struct.pack("!H",length))
         else:
-            self.con.send(struct.pack("!B",127 | masking))
+            self.con.send(struct.pack("!B",127))
             self.con.send(struct.pack("!Q",length))
-        if masking == 0b10000000:
-            self.con.send(self.maskingKey);
+
         self.con.send(struct.pack("!%ds"%(length,),text))
 
 def main():
