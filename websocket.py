@@ -31,7 +31,7 @@ class returnCrossDomain(Thread):
                 response += '''Upgrade: websocket\r\n'''
                 response += '''Connection: Upgrade\r\n'''
                 response += '''Sec-WebSocket-Accept: %s\r\n'''%(resKey,)
-                response += '''Sec-WebSocket-Protocol: chat,superchat\r\n'''
+#                response += '''Sec-WebSocket-Protocol: chat\r\n'''
                 self.con.send(response)
                 self.isHandleShake = True
                 print "握手成功"
