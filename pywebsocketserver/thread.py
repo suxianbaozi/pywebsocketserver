@@ -6,12 +6,15 @@ from threading import Thread
 import hashlib
 import base64
 import struct
+import json
 
-class returnCrossDomain(Thread):
-    def __init__(self,connection):
+class SocketIoThread(Thread):
+    def __init__(self,connection,uid,io):
         Thread.__init__(self)
         self.con = connection
         self.isHandleShake = False
+        self.uid = uid
+        self.io = io
     def run(self):
         while True:
             if not self.isHandleShake: #握手
@@ -19,7 +22,6 @@ class returnCrossDomain(Thread):
                 clientData  = self.con.recv(1024)
                 dataList = clientData.split("\r\n")
                 header = {}
-                print clientData
                 for data in dataList:
                     if ": " in data:
                         unit = data.split(": ")
@@ -31,13 +33,15 @@ class returnCrossDomain(Thread):
                 response += '''Upgrade: websocket\r\n'''
                 response += '''Connection: Upgrade\r\n'''
                 response += '''Sec-WebSocket-Accept: %s\r\n'''%(resKey,)
-#                response += '''Sec-WebSocket-Protocol: chat\r\n'''
                 self.con.send(response)
                 self.isHandleShake = True
+                #返回用户id
+                self.sendData("SETUID")
                 print "握手成功"
             else:
                 try:
                     data_head = self.con.recv(1)
+
                     header = struct.unpack("B",data_head)[0]
                     opcode = header & 0b00001111
                     print "操作符号%d"%(opcode,)
@@ -51,9 +55,7 @@ class returnCrossDomain(Thread):
                     data_length = self.con.recv(1)
                     data_lengths= struct.unpack("B",data_length)
                     data_length = data_lengths[0]& 0b01111111
-                    print bin(data_lengths[0])
                     masking = data_lengths[0] >> 7
-                    
                     if data_length<=125:
                         payloadLength = data_length
                     elif data_length==126:
@@ -79,13 +81,22 @@ class returnCrossDomain(Thread):
                     self.con.close()
                     break
     def onData(self,text) :
+        print type(text)
+        try:
+           datas =  json.loads(text)
+        except:
+           print "数据格式不正确"
+           return False
+        uid = datas['uid']
+        value = datas['data'].encode("utf8")
+        return self.io.onData(uid,value)
         
-        self.sendData("haha")
-        
-        print text
         
     def sendData(self,text) :
-        print "给客户端发送信息%s"%(text,)
+        jsonText = {}
+        jsonText['uid'] = self.uid
+        jsonText['text'] = text
+        text = json.dumps(jsonText)
         #头
         self.con.send(struct.pack("!B",0x81))
         #计算长度
@@ -104,22 +115,6 @@ class returnCrossDomain(Thread):
 
         self.con.send(struct.pack("!%ds"%(length,),text))
 
-def main():
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    sock.bind(('',88))
-    sock.listen(100)
-    while True:
-        try:
-            connection,address = sock.accept()
-            returnCrossDomain(connection).start()
-            print "收到一个请求"  
-        except:
-            time.sleep(1)
-        break
-
-if __name__=="__main__":
-    main()
-            
 
 
- 
+
