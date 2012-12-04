@@ -103,8 +103,7 @@ class SocketIoThread(Thread):
 
         sign = hashlib.new("md5",str(self.uid)+self.signKey).hexdigest()
         data = '%s<split>%s<split>%s'%(self.uid,sign,text)
-        
-	return data
+        return data
     def sendData(self,text) :
         
         text = self.packData(text)

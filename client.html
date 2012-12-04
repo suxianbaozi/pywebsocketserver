@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>客户端</title>
+<script type="text/javascript" src="jwplayer/jwplayer.js"></script>
+</head>
+
+<body>
+
+
+
+<script type="text/javascript"> 
+    var socket = new WebSocket("ws://localhost:88/test");
+    socket.onconnect = function() {
+        console.log("成功链接")；
+        socket.send("呵呵")；
+    }
+</script>
+
+</body>
+</html>
