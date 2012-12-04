@@ -6,18 +6,16 @@
 
 <body>
 <script>
-var client = new SocketClient("192.168.180.101",8181,"chat");
+var client = new SocketClient("192.168.187.15",8181,"chat");
 
 client.connect();
 
 client.onData  = function(text) {
-    alert(text);
+    console.log(text);
 }
 
 client.onRegist = function() {
-
     this.sendData("我就发送一条信息试试");
-
 }
 
 </script>

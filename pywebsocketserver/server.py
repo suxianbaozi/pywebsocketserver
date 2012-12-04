@@ -34,6 +34,7 @@ class SocketServer:
             
     def sendData(self,uid,text):
         if self.IoList.has_key(uid):
+            print uid,text
             self.IoList[uid].sendData(text)
         
 

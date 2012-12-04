@@ -45,7 +45,11 @@ class SocketIoThread(Thread):
             else:
                 try:
                     data_head = self.con.recv(1)
-
+                    if repr(data_head)=='':
+                        print "客户端断开链接"
+                        self.con.close()
+                        return
+                    
                     header = struct.unpack("B",data_head)[0]
                     opcode = header & 0b00001111
                     print "操作符号%d"%(opcode,)
@@ -66,11 +70,8 @@ class SocketIoThread(Thread):
                         payloadLength = struct.unpack("H",self.con.recv(2))[0]
                     elif data_length==127:
                         payloadLength = struct.unpack("Q",self.con.recv(8))[0]
-
                     print "字符串长度是:%d"%(data_length,)
-
                     if masking==1:
-                        print "是masking"
                         maskingKey = self.con.recv(4)
                         self.maskingKey = maskingKey
                     data = self.con.recv(payloadLength)
@@ -86,30 +87,28 @@ class SocketIoThread(Thread):
                     break
     def onData(self,text) :
         try:
-           datas =  json.loads(text)
+            uid,sign,value = text.split("<split>")
+            uid = int(uid)
         except:
-           print "数据格式不正确"
-           self.con.close()
-           return False
-        uid = datas['uid']
-        value = datas['data'].encode("utf8")
-        sign = datas['sign'].encode("utf8");
-
+            print "数据格式不正确"
+            self.con.close()
         hashStr = hashlib.new("md5",str(uid)+self.signKey).hexdigest()
-
         if hashStr!=sign:
             print "非法请求"
             self.con.close()
             return
         return self.io.onData(uid,value)
         
+    def packData(self,text):
+
+        sign = hashlib.new("md5",str(self.uid)+self.signKey).hexdigest()
+        data = '%s<split>%s<split>%s'%(self.uid,sign,text)
         
+	return data
     def sendData(self,text) :
-        jsonText = {}
-        jsonText['uid'] = self.uid
-        jsonText['text'] = text
-        jsonText['sign'] = hashlib.new("md5",str(self.uid)+self.signKey).hexdigest()
-        text = json.dumps(jsonText)
+        
+        text = self.packData(text)
+        print text
         #头
         self.con.send(struct.pack("!B",0x81))
         #计算长度

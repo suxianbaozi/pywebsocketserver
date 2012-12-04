@@ -9,15 +9,15 @@ function SocketClient(ip,port,query) {
             _this.onOpen()
         }
         this.socket.onmessage = function(event) {
-           
             data = event.data;
-            eval("var data="+data);
-            _this.uid = data['uid'];
-            _this.sign = data['sign'];
-            if(data['text']!='SETUID') {
-                _this.onData(data['text']);
+            data = data.split("<split>")
+            _this.uid = data[0];
+            _this.sign = data[1];
+            text = data[2];
+            
+            if(text!='SETUID') {  
+                _this.onData(text);
             } else {
-                
                 _this.onRegist()
             }
         }        
@@ -41,7 +41,7 @@ function SocketClient(ip,port,query) {
     }
     
     this.sendData = function (text) {
-        var data = '{"uid":'+this.uid+',"sign":"'+this.sign+'","data":"'+text+'"}'
+        var data = this.uid+'<split>'+this.sign+'<split>'+text
         this.socket.send(data);
     }
     
