@@ -19,26 +19,29 @@ class SocketIoThread(Thread):
     def run(self):
         while True:
             if not self.isHandleShake: #握手
-                print "握手"
-                clientData  = self.con.recv(1024)
-                dataList = clientData.split("\r\n")
-                header = {}
-                for data in dataList:
-                    if ": " in data:
-                        unit = data.split(": ")
-                        header[unit[0]] = unit[1]
-                secKey = header['Sec-WebSocket-Key'];
-                resKey = base64.encodestring(hashlib.new("sha1",secKey+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11").digest());
-                
-                response = '''HTTP/1.1 101 Switching Protocols\r\n'''
-                response += '''Upgrade: websocket\r\n'''
-                response += '''Connection: Upgrade\r\n'''
-                response += '''Sec-WebSocket-Accept: %s\r\n'''%(resKey,)
-                self.con.send(response)
-                self.isHandleShake = True
-                #返回用户id
-                self.sendData("SETUID")
-                print "握手成功"
+                try:
+		    print "握手"
+                    clientData  = self.con.recv(1024)
+                    dataList = clientData.split("\r\n")
+                    header = {}
+                    for data in dataList:
+                        if ": " in data:
+                            unit = data.split(": ")
+                            header[unit[0]] = unit[1]
+                    secKey = header['Sec-WebSocket-Key'];
+                    resKey = base64.encodestring(hashlib.new("sha1",secKey+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11").digest());
+                    
+                    response = '''HTTP/1.1 101 Switching Protocols\r\n'''
+                    response += '''Upgrade: websocket\r\n'''
+                    response += '''Connection: Upgrade\r\n'''
+                    response += '''Sec-WebSocket-Accept: %s\r\n'''%(resKey,)
+                    self.con.send(response)
+                    self.isHandleShake = True
+                    #返回用户id
+                    self.sendData("SETUID")
+                    print "握手成功"
+                except:
+                    pass
             else:
                 try:
                     data_head = self.con.recv(1)
