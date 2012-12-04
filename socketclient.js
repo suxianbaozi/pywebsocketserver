@@ -42,7 +42,6 @@ function SocketClient(ip,port,query) {
     
     this.sendData = function (text) {
         var data = '{"uid":'+this.uid+',"sign":"'+this.sign+'","data":"'+text+'"}'
-        console.log(data);
         this.socket.send(data);
     }
     
