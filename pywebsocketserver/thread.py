@@ -39,6 +39,7 @@ class SocketIoThread(Thread):
                     self.isHandleShake = True
                     #返回用户id
                     self.sendData("SETUID")
+                    self.io.onConnect(self.uid)
                     print "握手成功"
                 except:
                     pass
