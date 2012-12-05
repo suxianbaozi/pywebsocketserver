@@ -43,7 +43,7 @@ class SocketIoThread(Thread):
                     self.io.onConnect(self.uid)
                     print "握手成功"
                 except:
-                    pass
+                    return
             else:
                 try:
                     data_head = self.con.recv(1)
