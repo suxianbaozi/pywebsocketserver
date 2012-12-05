@@ -16,6 +16,7 @@ class SocketIoThread(Thread):
         self.uid = uid
         self.io = io
         self.signKey = "ADS#@!D"
+        self.online = True
     def run(self):
         while True:
             if not self.isHandleShake: #握手
@@ -48,7 +49,7 @@ class SocketIoThread(Thread):
                     data_head = self.con.recv(1)
                     if repr(data_head)=='':
                         print "客户端断开链接"
-                        self.con.close()
+                        self.onClose()
                         return
                     
                     header = struct.unpack("B",data_head)[0]
@@ -57,7 +58,7 @@ class SocketIoThread(Thread):
                     
                     if opcode==8:
                         print "客户端断开链接"
-                        self.con.close()
+                        self.onClose()
                         return
                     
                     
@@ -84,8 +85,8 @@ class SocketIoThread(Thread):
                     self.onData(true_data)
                 except Exception,e:
                     print e
-                    self.con.close()
-                    break
+                    self.onClose()
+                    return
     def onData(self,text) :
         try:
             uid,sign,value = text.split("<split>")
@@ -99,6 +100,11 @@ class SocketIoThread(Thread):
             self.con.close()
             return
         return self.io.onData(uid,value)
+    
+    def onClose(self):
+        self.con.close()
+        self.online = False
+        self.io.onClose(self.uid)
         
     def packData(self,text):
 
