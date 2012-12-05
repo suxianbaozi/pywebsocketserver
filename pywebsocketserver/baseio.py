@@ -23,7 +23,7 @@ class BaseIO:
         self.server.sendData(uid,text)
         '''发送数据'''
         return
-    def onClose(self):
+    def onClose(self,uid):
         return
     def setServer(self,server):
         self.server = server
