@@ -35,7 +35,7 @@ class SocketIoThread(Thread):
                     response = '''HTTP/1.1 101 Switching Protocols\r\n'''
                     response += '''Upgrade: websocket\r\n'''
                     response += '''Connection: Upgrade\r\n'''
-                    response += '''Sec-WebSocket-Accept: %s\r\n\r\n'''%(resKey,)
+                    response += '''Sec-WebSocket-Accept: %s\r\n\r\n\r\n'''%(resKey,)
                     self.con.send(response)
                     self.isHandleShake = True
                     #返回用户id
