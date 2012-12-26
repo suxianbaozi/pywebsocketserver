@@ -5,8 +5,10 @@ from pywebsocketserver.baseio import BaseIO
 
 class MyIO(BaseIO):
     def onData(self,uid,text):
-        print text,uid
         self.sendData(uid,"我收到了你的消息：%s"%(text,))
+    def onConnect(self,uid):
+        self.sendData(uid,"一条中文")
+
 try:
     port = sys.argv[1]
 except:

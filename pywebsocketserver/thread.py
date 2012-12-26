@@ -23,6 +23,7 @@ class SocketIoThread(Thread):
                 try:
 		    print "握手"
                     clientData  = self.con.recv(1024)
+                    print clientData
                     dataList = clientData.split("\r\n")
                     header = {}
                     for data in dataList:
