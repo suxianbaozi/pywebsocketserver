@@ -78,12 +78,15 @@ class SocketIoThread(Thread):
                         maskingKey = self.con.recv(4)
                         self.maskingKey = maskingKey
                     data = self.con.recv(payloadLength)
-                    i = 0
-                    true_data = ''
-                    for d in data:
-                        true_data += chr(ord(d) ^ ord(maskingKey[i%4]))
-                        i += 1
-                    self.onData(true_data)
+                    if masking==1:
+                        i = 0
+                        true_data = ''
+                        for d in data:
+                            true_data += chr(ord(d) ^ ord(maskingKey[i%4]))
+                            i += 1
+                        self.onData(true_data)
+                    else:
+                        self.onData(data)
                 except Exception,e:
                     print e
                     self.onClose()
