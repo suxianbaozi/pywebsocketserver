@@ -5,18 +5,29 @@
 </head>
 
 <body>
+
+<div id="list">
+
+</div>
+
+<input id="content" type="text" />
+<input id="send" type="button" value="发送" />
 <script>
-var client = new SocketClient("192.168.187.15",88,"chat");
-
+var client = new SocketClient("192.168.1.2",1337,"chat");
 client.connect();
-
 client.onData  = function(text) {
-    console.log(text);
+    var div = document.createElement('div');
+    div.innerHTML = (new Date().getTime()-text)+'ms';
+    document.getElementById('list').appendChild(div);
 }
 
-client.onRegist = function() {
-    this.sendData("我就发送一条信息试试");
+document.getElementById('send').onclick = function(e){
+    client.sendData(document.getElementById('content').value);
 }
+
+window.setInterval(function(){
+    client.sendData(new Date().getTime());
+},1000);
 
 </script>
 </body>
