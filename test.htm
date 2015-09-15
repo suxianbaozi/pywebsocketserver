@@ -13,21 +13,17 @@
 <input id="content" type="text" />
 <input id="send" type="button" value="发送" />
 <script>
-var client = new SocketClient("192.168.1.2",1337,"chat");
+var client = new SocketClient("127.0.0.1",8080,"chat");
 client.connect();
 client.onData  = function(text) {
     var div = document.createElement('div');
-    div.innerHTML = (new Date().getTime()-text)+'ms';
+    div.innerHTML = text;
     document.getElementById('list').appendChild(div);
 }
 
 document.getElementById('send').onclick = function(e){
     client.sendData(document.getElementById('content').value);
 }
-
-window.setInterval(function(){
-    client.sendData(new Date().getTime());
-},1000);
 
 </script>
 </body>

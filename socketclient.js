@@ -9,6 +9,7 @@ function SocketClient(ip,port,query) {
             _this.onOpen()
         }
         this.socket.onmessage = function(event) {
+            console.log(event);
             data = event.data;
             data = data.split("<split>")
             _this.uid = data[0];
@@ -33,7 +34,7 @@ function SocketClient(ip,port,query) {
     }
 
     this.onOpen = function() {
-
+        console.log('connect success');
     }
 
     this.onData = function(text) {
