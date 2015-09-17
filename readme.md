@@ -1,6 +1,10 @@
-sudo python demo.py 8181
+运行步骤
 
 
-会自动维护一个uid，所以js中，请在onregist之后再进行数据发送
+在终端中运行如下命令
 
-请无视deployserver.py这个文件
+python demo.py 8080
+
+然后用浏览器打开test.htm
+
+ok
