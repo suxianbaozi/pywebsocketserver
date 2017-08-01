@@ -32,11 +32,11 @@ class SocketIoThread(Thread):
 							header[unit[0]] = unit[1]
 					secKey = header['Sec-WebSocket-Key'];
 					resKey = base64.encodestring(hashlib.new("sha1",secKey+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11").digest());
-
+					resKey = resKey.replace('\n','')
 					response = '''HTTP/1.1 101 Switching Protocols\r\n'''
 					response += '''Upgrade: websocket\r\n'''
 					response += '''Connection: Upgrade\r\n'''
-					response += '''Sec-WebSocket-Accept: %s\r\n'''%(resKey,)
+					response += '''Sec-WebSocket-Accept: %s\r\n\r\n'''%(resKey,)
 					self.con.send(response)
 					self.isHandleShake = True
 					#返回用户id
