@@ -16,6 +16,7 @@ class SocketServer:
         self.IoList = {}
     def run(self):
         sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind(('',self.port))
         sock.listen(100)
 
