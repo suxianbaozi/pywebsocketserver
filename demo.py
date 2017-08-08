@@ -12,7 +12,7 @@ class MyIO(BaseIO):
 try:
     port = sys.argv[1]
 except:
-    port = 81
+    port = 8181
 
 port = int(port)
 myIo = MyIO()

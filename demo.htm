@@ -14,7 +14,7 @@
 <input id="send" type="button" value="发送" />
 <script>
 
-var client = new SocketClient("127.0.0.1",8080,"chat");
+var client = new SocketClient("127.0.0.1",8181,"chat");
 client.connect();
 
 client.onData  = function(text) {
